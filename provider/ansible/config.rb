@@ -32,6 +32,14 @@ module Provider
         Provider::Ansible::PropertyOverride
       end
 
+      def new_property_override
+        Provider::Overrides::Ansible::PropertyOverride
+      end
+
+      def new_resource_override
+        Provider::Overrides::Ansible::ResourceOverride
+      end
+
       def validate
         super
         check_optional_property :manifest, Provider::Ansible::Manifest
