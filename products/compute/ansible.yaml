@@ -148,8 +148,7 @@ overrides: !ruby/object:Provider::Overrides::ResourceOverrides
       encoder: encode_request
     properties:
       network: !ruby/object:Provider::Overrides::Ansible::PropertyOverride
-        default_value:
-          selfLink: global/networks/default
+        default_value: global/networks/default
       denied: !ruby/object:Provider::Overrides::Ansible::PropertyOverride
         version_added: '2.8'
       destinationRanges: !ruby/object:Provider::Overrides::Ansible::PropertyOverride
