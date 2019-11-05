@@ -385,11 +385,12 @@ resource "google_kms_key_ring" "key_ring" {
 resource "google_kms_crypto_key" "crypto_key" {
 	name            = "%s"
 	key_ring        = "${google_kms_key_ring.key_ring.self_link}"
+	project					= "%s"
 	labels = {
 		key = "value"
 	}
 }
-	`, projectId, projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName)
+	`, projectId, projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName, projectId)
 }
 
 func testGoogleKmsCryptoKey_rotation(projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName, rotationPeriod string) string {
@@ -416,8 +417,9 @@ resource "google_kms_crypto_key" "crypto_key" {
 	name            = "%s"
 	key_ring        = "${google_kms_key_ring.key_ring.self_link}"
 	rotation_period = "%s"
+	project					= "%s"
 }
-	`, projectId, projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName, rotationPeriod)
+	`, projectId, projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName, rotationPeriod, projectId)
 }
 
 func testGoogleKmsCryptoKey_rotationRemoved(projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName string) string {
@@ -443,8 +445,9 @@ resource "google_kms_key_ring" "key_ring" {
 resource "google_kms_crypto_key" "crypto_key" {
 	name            = "%s"
 	key_ring        = "${google_kms_key_ring.key_ring.self_link}"
+	project					= "%s"
 }
-	`, projectId, projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName)
+	`, projectId, projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName, projectId)
 }
 
 func testGoogleKmsCryptoKey_template(projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName, algorithm string) string {
@@ -471,12 +474,13 @@ resource "google_kms_crypto_key" "crypto_key" {
 	name            = "%s"
 	key_ring        = "${google_kms_key_ring.key_ring.self_link}"
 	purpose  = "ASYMMETRIC_SIGN"
+	project					= "%s"
 
 	version_template {
 		algorithm = "%s"
 	}
 }
-	`, projectId, projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName, algorithm)
+	`, projectId, projectId, projectOrg, projectBillingAccount, keyRingName, cryptoKeyName, projectId, algorithm)
 }
 
 func testGoogleKmsCryptoKey_removed(projectId, projectOrg, projectBillingAccount, keyRingName string) string {
