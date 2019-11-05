@@ -63,7 +63,10 @@ module Overrides
           # An array of function names that determine whether an error is retryable.
           :error_retry_predicates,
 
-          :schema_version
+          :schema_version,
+
+          # A boolean to add project attribut in resource schema.
+          :enable_project_attribut
         ]
       end
 

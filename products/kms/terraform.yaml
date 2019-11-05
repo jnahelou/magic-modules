@@ -58,6 +58,7 @@ overrides: !ruby/object:Overrides::ResourceOverrides
       For this reason, it is strongly recommended that you add lifecycle hooks
       to the resource to prevent accidental destruction.
     id_format: "{{key_ring}}/cryptoKeys/{{name}}"
+    enable_project_attribut: true
     import_format: ["{{key_ring}}/cryptoKeys/{{name}}"]
     schema_version: 1
     examples:
