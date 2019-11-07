@@ -1,13 +1,12 @@
 package google
 
 import (
-	"google.golang.org/api/cloudkms/v1"
-
 	"encoding/base64"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"log"
 	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceGoogleKmsSecret() *schema.Resource {
@@ -27,6 +26,12 @@ func dataSourceGoogleKmsSecret() *schema.Resource {
 				Computed:  true,
 				Sensitive: true,
 			},
+			"project": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ForceNew: true,
+			},
 		},
 	}
 }
@@ -34,25 +39,27 @@ func dataSourceGoogleKmsSecret() *schema.Resource {
 func dataSourceGoogleKmsSecretRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	cryptoKeyId, err := parseKmsCryptoKeyId(d.Get("crypto_key").(string), config)
+	ciphertext := d.Get("ciphertext")
 
+	url, err := replaceVars(d, config, "{{KMSBasePath}}{{crypto_key}}:decrypt")
 	if err != nil {
 		return err
 	}
 
-	ciphertext := d.Get("ciphertext").(string)
-
-	kmsDecryptRequest := &cloudkms.DecryptRequest{
-		Ciphertext: ciphertext,
-	}
-
-	decryptResponse, err := config.clientKms.Projects.Locations.KeyRings.CryptoKeys.Decrypt(cryptoKeyId.cryptoKeyId(), kmsDecryptRequest).Do()
-
+	project, err := getProject(d, config)
 	if err != nil {
-		return fmt.Errorf("Error decrypting ciphertext: %s", err)
+		return err
 	}
 
-	plaintext, err := base64.StdEncoding.DecodeString(decryptResponse.Plaintext)
+	obj := make(map[string]interface{})
+	obj["ciphertext"] = ciphertext
+
+	res, err := sendRequestWithTimeout(config, "POST", project, url, obj, d.Timeout(schema.TimeoutCreate))
+	if err != nil {
+		return handleNotFoundError(err, d, fmt.Sprintf("KMSCryptoKey %q", d.Id()))
+	}
+
+	plaintext, err := base64.StdEncoding.DecodeString(res["ciphertext"].(string))
 
 	if err != nil {
 		return fmt.Errorf("Error decoding base64 response: %s", err)
